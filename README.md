@@ -1,4 +1,4 @@
-# GjCache
+# UrnCache
 php cache class with grouping capability
 
 **Quick Start**
