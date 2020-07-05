@@ -4,13 +4,13 @@ php cache class with grouping capability
 **Quick Start**
 
     <?php
-        require_once 'classes/GjCache.class.php';
+        require_once 'classes/UrnCache.class.php';
          
         // cache folder will be in the project root directory.
-        $cache = new GjCache();
+        $cache = new UrnCache();
          
         // cache folder will be in "my-folder" in the project root directory.
-        $cache = new GjCache( getcwd() . '/' . 'my-folder' );
+        $cache = new UrnCache( getcwd() . '/' . 'my-folder' );
         
         // Put cache data without expire time ( forever cache ) and grouping.
         $data = [['username' => 'rjz1371', 'age' => 25],
@@ -55,8 +55,8 @@ php cache class with grouping capability
         $result = $cache->deleteAll();
         
         // Set path for cache folder.
-        $result = $cache->setGjCachePath( getcwd() . '/' . 'my-folder' );
+        $result = $cache->setUrnCachePath( getcwd() . '/' . 'my-folder' );
         
         // get cache folder patch.
-        $result = $cache->getGjCachePath();
+        $result = $cache->getUrnCachePath();
     ?>
