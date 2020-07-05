@@ -3,9 +3,9 @@
 error_reporting( -1 );
 ini_set( 'display_errors', 'On' );
 
-/******** Require GjCache class ********/
-require_once 'classes/GjCache.class.php';
-$cache = new GjCache();
+/******** Require UrnCache class ********/
+require_once 'classes/UrnCache.class.php';
+$cache = new UrnCache();
 
 /******** Put cache data ********/
 $data = [['username' => 'rjz1371', 'age' => 25],
