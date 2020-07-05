@@ -1,6 +1,6 @@
 <?php
 /**
- * GjCache Class
+ * UrnCache Class
  * API Documentation:
  * @author    Reza jabbari
  * @since     20.11.2018
@@ -9,12 +9,12 @@
  * @license   BSD http://www.opensource.org/licenses/bsd-license.php
  */
 
-class GjCache {
+class UrnCache {
 	
 	private $patch;
 	
 	/**
-	 * GjCache constructor.
+	 * UrnCache constructor.
 	 * @param string $patch
 	 */
 	public function __construct($patch = '') {
@@ -41,7 +41,7 @@ class GjCache {
 		$cacheData[ 'data' ] = serialize( $data );
 		$cacheData[ 'expire' ] = 0;
 		$filename = '';
-		$cacheDir = $this->patch . '/GjCache';
+		$cacheDir = $this->patch . '/UrnCache';
 		if ( !file_exists( $cacheDir ) ) {
 			mkdir( $cacheDir );
 		}
@@ -64,7 +64,7 @@ class GjCache {
 		}
 		if ( $filename == '' ) {
 			$microtime = str_replace( '.', '_', microtime( true ) );
-			$filename = $cacheDir . '/' . $cacheName . '_' . $microtime . '_' . mt_rand( 10000, 999999 ) . '.GjCache';
+			$filename = $cacheDir . '/' . $cacheName . '_' . $microtime . '_' . mt_rand( 10000, 999999 ) . '.UrnCache';
 		}
 		if ( $expireMin <> 0 ) {
 			$cacheData[ 'expire' ] = strtotime( '+' . $expireMin . ' minute' );
@@ -85,7 +85,7 @@ class GjCache {
 		$cacheName = trim( $cacheName );
 		$group = trim( $group );
 		$cacheName = preg_replace( '/[^a-zA-Z0-9\-]/', '-', $cacheName );
-		$filename = $this->patch . '/GjCache';
+		$filename = $this->patch . '/UrnCache';
 		if ( $group != '' ) {
 			$filename .= '/' . preg_replace( '/[^a-zA-Z0-9_\-]/', '', $group );
 		}
@@ -128,7 +128,7 @@ class GjCache {
 		$cacheName = trim( $cacheName );
 		$group = trim( $group );
 		$cacheName = preg_replace( '/[^a-zA-Z0-9\-]/', '-', $cacheName );
-		$filename = $this->patch . '/GjCache';
+		$filename = $this->patch . '/UrnCache';
 		if ( $group != '' ) {
 			$filename .= '/' . preg_replace( '/[^a-zA-Z0-9_\-]/', '', $group );
 		}
@@ -170,7 +170,7 @@ class GjCache {
 		$cacheName = trim( $cacheName );
 		$group = trim( $group );
 		$cacheName = preg_replace( '/[^a-zA-Z0-9\-]/', '-', $cacheName );
-		$filename = $this->patch . '/GjCache';
+		$filename = $this->patch . '/UrnCache';
 		if ( $group != '' ) {
 			$filename .= '/' . preg_replace( '/[^a-zA-Z0-9_\-]/', '', $group );
 		}
@@ -201,7 +201,7 @@ class GjCache {
 	 */
 	public function deleteByGroup($group = '') {
 		$group = trim( $group );
-		$filename = $this->patch . '/GjCache';
+		$filename = $this->patch . '/UrnCache';
 		if ( !file_exists( $filename ) ) {
 			return false;
 		}
@@ -240,7 +240,7 @@ class GjCache {
 	 * @return bool
 	 */
 	public function deleteAll() {
-		$filename = $this->patch . '/GjCache';
+		$filename = $this->patch . '/UrnCache';
 		if ( !file_exists( $filename ) ) {
 			return false;
 		}
@@ -261,18 +261,18 @@ class GjCache {
 	}
 	
 	/**
-	 * Get GjCache directory patch
+	 * Get UrnCache directory patch
 	 * @return string
 	 */
-	public function getGjCachePath() {
+	public function getUrnCachePath() {
 		return $this->patch;
 	}
 	
 	/**
-	 * Set GjCache directory patch
+	 * Set UrnCache directory patch
 	 * @param $patch
 	 */
-	public function setGjCachePath($patch) {
+	public function setUrnCachePath($patch) {
 		$this->patch = rtrim( $patch, '/' );
 	}
 }
