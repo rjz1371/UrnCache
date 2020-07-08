@@ -19,7 +19,7 @@ composer require rjz1371/urncache
 composer update
 </pre>
 
-<b>namespace<b>
+<b>namespace</b>
 <pre>
 use rjz1371\UrnCache\UrnCache;
 </pre>
