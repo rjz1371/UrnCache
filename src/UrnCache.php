@@ -12,45 +12,33 @@ class UrnCache {
      * 
      * @param        $key
      * @param        $value
-     * @param int    $expire
      * @param string $group
+     * @param int    $expire
      * @return bool
      */
     public static function put($key, $value, $group, $expire = 0) {
-        if (empty($value) or is_null($value)) {
-            return false;
-        }
+        self::init();
         $expire = intval($expire);
-        $key = trim($key);
-        $group = trim($group);
-        $key = preg_replace('/[^a-zA-Z0-9\-]/', '-', $key);
+        $key = self::retrieveKey($key);
+        $group = self::retrieveGroupPath($group);
         $cacheData['data'] = serialize($value);
         $cacheData['expire'] = 0;
         $filename = '';
-        $cacheDir = storage_path('app/urncache/');
-        if (!file_exists($cacheDir)) {
-            mkdir($cacheDir);
-        }
-        $cacheDir .= preg_replace('/[^a-zA-Z0-9_\-]/', '', $group);
-        if (!file_exists($cacheDir)) {
-            mkdir($cacheDir);
-        }
-        if (file_exists($cacheDir)) {
-            $files = scandir($cacheDir);
+        if (!file_exists($group)) {
+            mkdir($group);
+        } else {
+            $files = array_diff(scandir($group), ['.', '..']);
             foreach ($files as $file) {
-                if ($file == '.' or $file == '..' or is_dir($cacheDir . '/' . $file)) {
-                    continue;
-                }
                 $explode = explode('_', $file);
                 if ($explode[0] == $key) {
-                    $filename = $cacheDir . '/' . $file;
+                    $filename = $group . '/' . $file;
                     break;
                 }
             }
         }
-        if ($filename == '') {
+        if (empty($filename)) {
             $microtime = str_replace('.', '_', microtime(true));
-            $filename = $cacheDir . '/' . $key . '_' . $microtime . '_' . Str::random(10) . '.urncache';
+            $filename = $group . '/' . $key . '_' . $microtime . '_' . Str::random(10) . '.urncache';
         }
         if ($expire <> 0) {
             $cacheData['expire'] = strtotime('+' . $expire . ' second');
@@ -63,30 +51,22 @@ class UrnCache {
     /**
      * Retrieve cache
      * 
-     * @param        $cacheName
+     * @param        $key
      * @param string $group
      * @return bool|mixed
      */
     public static function get($key, $group) {
         $find = false;
-        $key = trim($key);
-        $group = trim($group);
-        $key = preg_replace('/[^a-zA-Z0-9\-]/', '-', $key);
-        $filename = storage_path('app/urncache/');
-        if ($group != '') {
-            $filename .= '/' . preg_replace('/[^a-zA-Z0-9_\-]/', '', $group);
-        }
-        if (!file_exists($filename)) {
+        $key = self::retrieveKey($key);
+        $group = self::retrieveGroupPath($group);
+        if (!file_exists($group)) {
             return false;
         }
-        $files = scandir($filename);
+        $files = array_diff(scandir($group), ['.', '..']);
         foreach ($files as $file) {
-            if ($file == '.' or $file == '..' or is_dir($filename . '/' . $file)) {
-                continue;
-            }
             $explode = explode('_', $file);
             if ($explode[0] == $key) {
-                $filename = $filename . '/' . $file;
+                $filename = $group . '/' . $file;
                 $find = true;
                 break;
             }
@@ -97,7 +77,6 @@ class UrnCache {
         $data = unserialize(File::get($filename));
         if ($data['expire'] <> 0 and $data['expire'] <= time()) {
             unlink($filename);
-
             return false;
         }
 
@@ -113,24 +92,16 @@ class UrnCache {
      */
     public static function has($key, $group = '') {
         $find = false;
-        $key = trim($key);
-        $group = trim($group);
-        $key = preg_replace('/[^a-zA-Z0-9\-]/', '-', $key);
-        $filename = storage_path('app/urncache/');
-        if ($group != '') {
-            $filename .= preg_replace('/[^a-zA-Z0-9_\-]/', '', $group);
-        }
-        if (!file_exists($filename)) {
+        $key = self::retrieveKey($key);
+        $group = self::retrieveGroupPath($group);
+        if (!file_exists($group)) {
             return false;
         }
-        $files = scandir($filename);
+        $files = array_diff(scandir($group), ['.', '..']);
         foreach ($files as $file) {
-            if ($file == '.' or $file == '..' or is_dir($filename . '/' . $file)) {
-                continue;
-            }
             $explode = explode('_', $file);
             if ($explode[0] == $key) {
-                $filename = $filename . '/' . $file;
+                $filename = $group . '/' . $file;
                 $find = true;
                 break;
             }
@@ -150,29 +121,21 @@ class UrnCache {
     /**
      * Delete cache.
      * 
-     * @param        $cacheName
+     * @param        $key
      * @param string $group
      * @return bool
      */
-    public static function delete($cacheName, $group) {
-        $cacheName = trim($cacheName);
-        $group = trim($group);
-        $cacheName = preg_replace('/[^a-zA-Z0-9\-]/', '-', $cacheName);
-        $filename = storage_path('app/urncache/');
-        if ($group != '') {
-            $filename .= preg_replace('/[^a-zA-Z0-9_\-]/', '', $group);
-        }
-        if (!file_exists($filename)) {
+    public static function delete($key, $group) {
+        $key = self::retrieveKey($key);
+        $group = self::retrieveGroupPath($group);
+        if (!file_exists($group)) {
             return false;
         }
-        $files = scandir($filename);
+        $files = array_diff(scandir($group), ['.', '..']);
         foreach ($files as $file) {
-            if ($file == '.' or $file == '..' or is_dir($filename . '/' . $file)) {
-                continue;
-            }
             $explode = explode('_', $file);
-            if ($explode[0] == $cacheName) {
-                $filename = $filename . '/' . $file;
+            if ($explode[0] == $key) {
+                $filename = $group . '/' . $file;
                 unlink($filename);
                 return true;
             }
@@ -182,44 +145,19 @@ class UrnCache {
     }
 
     /**
-     * Delete cache in special group.
+     * Delete all cache in special group.
      * 
      * @param string $group
      * @return bool
      */
-    public static function deleteByGroup($group = '') {
-        $group = trim($group);
-        $filename = storage_path('app/urncache/');
-        if (!file_exists($filename)) {
-            return false;
-        }
-        if ($group == '') {
-            $files = array_diff(scandir($filename), ['.', '..']);
-            foreach ($files as $file) {
-                if (is_dir($filename . '/' . $file)) {
-                    continue;
-                }
-                unlink($filename . '/' . $file);
-            }
-
-            return true;
-        }
-        $files = array_diff(scandir($filename), ['.', '..']);
+    public static function deleteByGroup($group) {
+        $group = self::retrieveGroupPath($group);
+        $files = array_diff(scandir($group), ['.', '..']);
         foreach ($files as $file) {
-            if (is_file($filename . '/' . $file)) {
-                continue;
-            }
-            if ($file == $group) {
-                $currentDirFiles = array_diff(scandir($filename . '/' . $file), ['.', '..']);
-                foreach ($currentDirFiles as $f) {
-                    unlink($filename . '/' . $group . '/' . $f);
-                }
-                rmdir($filename . '/' . $group);
-                return true;
-            }
+            unlink($group . '/' . $file);
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -228,23 +166,46 @@ class UrnCache {
      * @return bool
      */
     public static function deleteAll() {
-        $filename = storage_path('app/urncache/');
-        if (!file_exists($filename)) {
-            return false;
-        }
+        $filename = storage_path('app/urncache');
         $files = array_diff(scandir($filename), ['.', '..']);
         foreach ($files as $file) {
-            if (is_file($filename . '/' . $file)) {
-                unlink($filename . '/' . $file);
-            } else {
-                $currentDirFiles = array_diff(scandir($filename . '/' . $file), ['.', '..']);
-                foreach ($currentDirFiles as $f) {
-                    unlink($filename . '/' . $file . '/' . $f);
-                }
-                rmdir($filename . '/' . $file);
+            $pathname = $filename . '/' . $file;
+            if (is_file($pathname)) {
+                continue;
             }
+            $currentDirFiles = array_diff(scandir($pathname), ['.', '..']);
+            foreach ($currentDirFiles as $f) {
+                unlink($pathname . '/' . $f);
+            }
+            rmdir($pathname);
         }
 
         return true;
+    }
+
+    /**
+     * create urncache dir if not exists.
+     */
+    private static function init() {
+        $pathname = storage_path('app/urncache');
+        if (!file_exists($pathname)) {
+            mkdir($pathname);
+        }
+    }
+
+    /**
+     * retrieve cache key name.
+     */
+    private static function retrieveKey($key) {
+        $key = trim($key);
+        return preg_replace('/[^a-zA-Z0-9\-]/', '-', $key);
+    }
+
+    /**
+     * retrieve group path.
+     */
+    private static function retrieveGroupPath($group) {
+        $group = trim($group);
+        return storage_path('app/urncache/') . preg_replace('/[^a-zA-Z0-9_\-]/', '', $group);
     }
 }
