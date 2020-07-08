@@ -11,6 +11,57 @@
 
 Laravel UrnCache provides a cache system with grouping ability.
 
+**Quick Start**
+
+// install
+composer require rjz1371/urncache
+composer update
+
+// namespace
+use rjz1371\UrnCache\UrnCache;
+
+// Put cache data without expire time ( forever cache ).
+$key = 'my-cache-key';
+$value = [
+    ['username' => 'rjz1371', 'age' => 25],
+    ['username' => 'reza', 'age' => 20],
+    ['username' => 'alex', 'age' => 56]
+];
+$group = 'users';
+UrnCache::put($key, $value, $group);
+
+// Put cache data with expire time ( expire after 1 hour ).
+$key = 'my-cache-key';
+$value = [
+    ['username' => 'rjz1371', 'age' => 25],
+    ['username' => 'reza', 'age' => 20],
+    ['username' => 'alex', 'age' => 56]
+];
+$group = 'users';
+UrnCache::put($key, $value, $group, 3600);
+
+// Checking cache exists or not ( $result is true or false ).
+$key = 'my-cache-key';
+$group = 'users';
+$result = UrnCache::has($key, $group);
+
+// Retrive cache data.
+$key = 'my-cache-key';
+$group = 'users';
+$result = UrnCache::get($key, $group);
+
+// Delete cache.
+$key = 'my-cache-key';
+$group = 'users';
+UrnCache::delete($key, $group);
+
+// Delete all cache in special group.
+$group = 'users';
+UrnCache::deleteByGroup($group);
+
+// Delete all cache.
+UrnCache::deleteAll();
+
 ## Contributing
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
