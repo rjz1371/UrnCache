@@ -1,2 +1,5 @@
-GjCache/
-.idea/
+*
+!.gitignore
+!README.md
+!LICENSE.md
+!packages/rjz1371/UrnCache/*
