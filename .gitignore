@@ -1,5 +1,5 @@
-*
-!.gitignore
-!README.md
-!LICENSE.md
-!packages/rjz1371/UrnCache/*
+/vendor
+composer.lock
+/phpunit.xml
+.phpunit.result.cache
+*.DS_Store

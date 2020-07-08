@@ -1,0 +1,27 @@
+{
+    "name": "rjz1371/urncache",
+    "description": "Laravel UrnCache provides a cache system with grouping ability.",
+    "keywords": [
+        "laravel",
+        "UrnCache",
+        "cache"
+    ],
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "reza jabbari",
+            "email": "rjz1371@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "illuminate/support": "^6.9|^7.0"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "rjz1371\\UrnCache\\": "src/"
+        }
+    }
+}
