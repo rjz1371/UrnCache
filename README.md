@@ -14,8 +14,10 @@ Laravel UrnCache provides a cache system with grouping ability.
 **Quick Start**
 
 // install
+<pre>
 composer require rjz1371/urncache
 composer update
+</pre>
 
 // namespace
 use rjz1371\UrnCache\UrnCache;
